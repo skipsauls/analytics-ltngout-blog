@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Einstein Analytics – Lightning Out</title>
+  </head>
+  <body>
+    <div class="container">
+      <button onclick="loginToSalesforce();">Login to Salesforce</button>
+      <div id="dashboard"></div>
+    </div>
+    <script src="https://YOURDOMAIN.salesforce.com/lightning/lightning.out.js"></script>
+    <script src="/javascripts/force.all.js"></script>
+    <script>
+      function loginToSalesforce() {
+        let appId = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+        let loginURL = "https://login.salesforce.com";
+        let oauthCallbackURL = window.location.origin + "/oauthcallback.html";
+        let oauth = force.OAuth.createInstance(appId, loginURL, oauthCallbackURL);
+        let loAppName = "c:loApp";
+        oauth.login().then(function(oauthResult) {
+          console.warn('oauthResult: ', oauthResult);
+        });  
+      }
+    </script>
+  </body>
+</html>

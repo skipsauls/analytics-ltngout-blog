@@ -1,0 +1,22 @@
+{
+  "name": "analytics-ltngout-blog",
+  "version": "1.0.0",
+  "description": "Einstein Analytics Lightning Out sample for the blog post",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skipsauls/analytics-ltngout-blog.git"
+  },
+  "author": "Skip Sauls",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/skipsauls/analytics-ltngout-blog/issues"
+  },
+  "homepage": "https://github.com/skipsauls/analytics-ltngout-blog#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
