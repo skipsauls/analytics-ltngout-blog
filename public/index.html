@@ -6,21 +6,84 @@
   <body>
     <div class="container">
       <button onclick="loginToSalesforce();">Login to Salesforce</button>
-      <div id="dashboard"></div>
+      <button onclick="filterDashboard();">Filter Dashboard</button>
+      <div id="myButton"></div>
+      <div id="myDashboard"></div>
     </div>
-    <script src="https://YOURDOMAIN.salesforce.com/lightning/lightning.out.js"></script>
-    <script src="/javascripts/force.all.js"></script>
+    <script src="https://SOMEDOMAIN.my.salesforce.com/lightning/lightning.out.js"></script>
+    <script src="/javascripts/force.oauth.js"></script>
     <script>
-      function loginToSalesforce() {
         let appId = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-        let loginURL = "https://login.salesforce.com";
-        let oauthCallbackURL = window.location.origin + "/oauthcallback.html";
+        let loginURL = 'https://login.salesforce.com';
+        let oauthCallbackURL = window.location.origin + '/oauthcallback.html';
         let oauth = force.OAuth.createInstance(appId, loginURL, oauthCallbackURL);
-        let loAppName = "c:loApp";
+        let loAppName = 'c:loBlog';
+        let developerName = 'eadx__Demo_Dashboard10';
+        function loginToSalesforce() {
         oauth.login().then(function(oauthResult) {
-          console.warn('oauthResult: ', oauthResult);
+            console.warn('oauthResult: ', oauthResult);
+
+            let ltngURL = oauthResult.instanceURL.replace(/my.salesforce/, 'lightning.force');    
+            $Lightning.use(loAppName, function(evt) {
+                $Lightning.createComponent('lightning:button', {label: 'Demo'}, 'myButton', function(cmp, msg, err) {});
+                $Lightning.createComponent('wave:waveDashboard', {
+                    developerName: developerName,
+                    height: '700',
+                    showHeader: false,
+                    showTitle: false,
+                    showSharing: false
+                }, "myDashboard", function(cmp, msg, err) {});
+                $A.eventService.addHandler({event: 'wave:selectionChanged', handler: handleSelectionChanged});
+            }, ltngURL, oauthResult.accessToken);        
         });  
-      }
+    }
+
+    function handleSelectionChanged(event) {
+        let params = event.getParams();
+        let noun = params.noun;
+        let verb = params.verb;
+        if (noun === 'dashboard' && verb === 'selection') {
+            let payload = params.payload;
+            let step = params.payload.step;
+            console.warn('step: ', step);
+            params.payload.data.forEach(function(row){
+                for (let name in row) {
+                    value = row[name];
+                    console.warn(name, value);
+                }
+            });
+        }
+    }
+
+    function filterDashboard(event) {
+        let filter = {
+            datasets:{
+                'eadx__oppty_demo':[
+                    {
+                        fields:[
+                            'StageName'
+                        ],
+                        filter:{
+                            operator: 'in',
+                            values: [
+                                'Value Proposition'
+                            ]
+                        }
+                    }
+                ]
+            }
+        };
+        let dashboardId = developerName;
+        let params = {
+            value: JSON.stringify(filter),
+            id: dashboardId,
+            type: 'dashboard'
+        };
+        let evt = $A.get('e.wave:update');
+        evt.setParams(params);
+        evt.fire();    
+    }
+
     </script>
   </body>
 </html>
